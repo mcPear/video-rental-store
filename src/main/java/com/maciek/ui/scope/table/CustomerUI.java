@@ -1,4 +1,4 @@
-package com.maciek.ui.scope.entity;
+package com.maciek.ui.scope.table;
 
 import com.maciek.entity.Customer;
 import com.maciek.repository.CustomerRepository;
@@ -37,8 +37,8 @@ public class CustomerUI extends VerticalLayout {
         addComponents(actions,grid,editor);
 
         grid.setHeight(300, Unit.PIXELS);
-        grid.setWidth(500, Unit.PIXELS);
-        grid.setColumns("id", "firstName", "lastName", "emailAddress");
+        grid.setWidth(700, Unit.PIXELS);
+        grid.setColumns("id", "lastName", "firstName", "emailAddress");
 
         filter.setPlaceholder("Filter by last name");
         filter.setValueChangeMode(ValueChangeMode.LAZY);
@@ -54,7 +54,7 @@ public class CustomerUI extends VerticalLayout {
         listCustomers(null);
     }
 
-    void listCustomers(String filterText) {
+    private void listCustomers(String filterText) {
         if (StringUtils.isEmpty(filterText)) {
             grid.setItems(repo.findAll());
         }

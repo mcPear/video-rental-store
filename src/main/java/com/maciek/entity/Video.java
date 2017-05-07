@@ -3,6 +3,8 @@ package com.maciek.entity;
 import lombok.*;
 
 import javax.persistence.*;
+import javax.validation.Valid;
+import javax.validation.constraints.Size;
 import java.util.Set;
 
 /**

@@ -1,7 +1,8 @@
-package com.maciek.ui.scope.entity;
+package com.maciek.ui.scope.table;
 
 import com.maciek.VideoRentalStoreApplication;
 import com.maciek.entity.Video;
+import com.maciek.repository.RentalRepository;
 import com.maciek.repository.VideoRepository;
 import com.maciek.ui.scope.editor.VideoEditor;
 import com.vaadin.icons.VaadinIcons;
@@ -29,21 +30,23 @@ public class VideoUI extends VerticalLayout {
     private final Button addNewBtn;
     private static final Logger log = LoggerFactory.getLogger(VideoRentalStoreApplication.class);
     private final RentalUI rentalUI;
+    private final RentalRepository rentalRepository;
 
     @Autowired
-    public VideoUI(VideoRepository repo, VideoEditor videoEditor, RentalUI rentalUI) {
+    public VideoUI(VideoRepository repo, VideoEditor videoEditor, RentalUI rentalUI, RentalRepository rentalRepository) {
         this.editor=videoEditor;
         this.repo=repo;
         this.grid=new Grid<>(Video.class);
         this.filter=new TextField();
         this.addNewBtn = new Button("New video", VaadinIcons.PLUS);
         this.rentalUI = rentalUI;
+        this.rentalRepository = rentalRepository;
 
         HorizontalLayout actions = new HorizontalLayout(filter, addNewBtn);
         addComponents(actions,grid,editor);
 
         grid.setHeight(300, Unit.PIXELS);
-        grid.setWidth(500, Unit.PIXELS);
+        grid.setWidth(700, Unit.PIXELS);
         grid.setColumns("id", "title", "director", "year");
 
         filter.setPlaceholder("Filter by title");
@@ -62,7 +65,7 @@ public class VideoUI extends VerticalLayout {
         listAvailableVideos(null);
     }
 
-    void listAvailableVideos(String filterText) {
+    private void listAvailableVideos(String filterText) {
         if (StringUtils.isEmpty(filterText)) {
             grid.setItems(repo.findByRentedFalse());
         }

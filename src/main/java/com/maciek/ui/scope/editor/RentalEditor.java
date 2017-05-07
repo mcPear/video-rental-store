@@ -12,20 +12,20 @@ import com.maciek.repository.CustomerRepository;
 import com.maciek.repository.RentalRepository;
 import com.maciek.repository.VideoRepository;
 import com.vaadin.data.Binder;
+import com.vaadin.data.BinderValidationStatus;
+import com.vaadin.data.ValidationResult;
 import com.vaadin.event.ShortcutAction;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.spring.annotation.SpringComponent;
 import com.vaadin.spring.annotation.UIScope;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.CssLayout;
-import com.vaadin.ui.TextField;
-import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.sql.Date;
+import java.util.List;
 
 @SpringComponent
 @UIScope
@@ -51,25 +51,19 @@ public class RentalEditor extends VerticalLayout {
 
         addComponents(customerId, videoId, actions);
 
-        binder.bindInstanceFields(this);
+        bindWithValidatorCustomerId();
+        bindWithValidatorVideoId();
 
         setSpacing(true);
         actions.setStyleName(ValoTheme.LAYOUT_COMPONENT_GROUP);
         save.setStyleName(ValoTheme.BUTTON_PRIMARY);
         save.setClickShortcut(ShortcutAction.KeyCode.ENTER);
-        save.addClickListener(e ->
-        {
-            rentalRepository.save(rentalModelToRental());
-            Video modifiedVideo = videoRepository.findOne(Long.parseLong(currEditedRentalModel.getVideoId()));
-            modifiedVideo.setRented(true);
-            videoRepository.save(modifiedVideo);
-        });
 
         cancel.addClickListener(e -> setVisible(false));
         setVisible(false);
     }
 
-    public final void openRentalByModelEditor(RentalModel r) {
+    public final void openRentalModelEditor(RentalModel r) {
         currEditedRentalModel = r;
         binder.setBean(currEditedRentalModel);
         setVisible(true);
@@ -78,7 +72,18 @@ public class RentalEditor extends VerticalLayout {
     }
 
     public void setChangeHandler(ChangeHandler h) {
-        save.addClickListener(e -> h.onChange());
+        save.addClickListener(e ->
+        {
+            if(fieldsAreValid()) {
+                rentalRepository.save(rentalModelToRental());
+                Video modifiedVideo = videoRepository.findOne(Long.parseLong(currEditedRentalModel.getVideoId()));
+                modifiedVideo.setRented(true);
+                videoRepository.save(modifiedVideo);
+                h.onChange();
+                showErrorMessage();
+            }
+            Notification.show("Saved successfully");
+        });
     }
 
     public Rental rentalModelToRental(){
@@ -87,6 +92,49 @@ public class RentalEditor extends VerticalLayout {
         Date date = currEditedRentalModel.getDate();
         Boolean returned = currEditedRentalModel.getReturned();
         return new Rental(customer, video, date, returned);
+    }
+
+    private void bindWithValidatorCustomerId(){
+        String atLeastOneDigitRegex = "[\\d]+";
+        binder.forField(customerId).
+                withValidator(id -> id.matches(atLeastOneDigitRegex), "Invalid customer id").
+                withValidator(id -> customerExistsInDB(Long.parseLong(id)), "There is no customer with this ID").
+                bind(RentalModel::getCustomerId, RentalModel::setCustomerId);
+    }
+
+    private void bindWithValidatorVideoId(){
+        String atLeastOneDigitRegex = "[\\d]+";
+        binder.forField(videoId).
+                withValidator(id -> id.matches(atLeastOneDigitRegex), "Invalid video id").
+                withValidator(id -> videoExistsInDB(Long.parseLong(id)), "There is no video with this ID").
+                withValidator(id -> videoIsAvailable(Long.parseLong(id)), "Video is unavailable").
+                bind(RentalModel::getVideoId, RentalModel::setVideoId);
+    }
+
+    private Boolean fieldsAreValid(){
+        BinderValidationStatus<RentalModel> validationStatus = binder.validate();
+        return !validationStatus.hasErrors();
+    }
+
+    private Boolean customerExistsInDB(Long id){
+        return customerRepository.findOne(id)!=null;
+    }
+
+    private Boolean videoIsAvailable(Long id){
+        Video video = videoRepository.findOne(id);
+        return (video != null) && (!video.getRented());
+    }
+
+    private Boolean videoExistsInDB(Long id){
+        return  videoRepository.findOne(id)!=null;
+    }
+
+    private void showErrorMessage(){
+        BinderValidationStatus<RentalModel> validationStatus = binder.validate();
+        List<ValidationResult> validationResultList = validationStatus.getValidationErrors();
+
+        if(validationResultList.size()==0)
+            Notification.show("Saved successfully");
     }
 
 }
