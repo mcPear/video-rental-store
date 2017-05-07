@@ -37,12 +37,11 @@ public class VideoRentalStoreApplication {
 	@Bean
 	public CommandLineRunner loadData() {
 		return (args) -> {
-			customerRepository.save(new Customer("Maciek","Gru","email1"));
-			customerRepository.save(new Customer("Adam","Szu","email2"));
-			videoRepository.save(new Video("lotr","Spielberg",2016));
-			videoRepository.save(new Video("hobbit","Rafacinski",2012));
-			rentalRepository.save(new Rental(customerRepository.findOne(2l),videoRepository.findOne(1l), new Date(new java.util.Date().getTime())));
-			customerRepository.delete(2l);
+			customerRepository.save(new Customer("Maciek","Gruszczyński","maciek.gruszka@gmail.com"));
+			customerRepository.save(new Customer("Adam","Nowak","adam.nowak@gmail.com"));
+			videoRepository.save(new Video("Pirates of The Carraibean","Dontknow","2017", false));
+			videoRepository.save(new Video("Fast and furious","Spielberg","2012", false));
+			rentalRepository.save(new Rental(customerRepository.findOne(2l),videoRepository.findOne(1l), new Date(new java.util.Date().getTime()),false));
 		};
 	}
 

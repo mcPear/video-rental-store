@@ -12,7 +12,6 @@ import java.util.Set;
 @Setter
 @Getter
 @NoArgsConstructor
-@ToString
 @Entity
 public class Customer {
 
@@ -33,6 +32,10 @@ public class Customer {
         this.firstName=firstName;
         this.lastName=lastName;
         this.emailAddress=emailAddress;
+    }
+
+    public String toString(){
+        return "("+id+") "+lastName+" "+firstName;
     }
 
 }
