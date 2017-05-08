@@ -39,8 +39,8 @@ public class VideoRentalStoreApplication {
 		return (args) -> {
 			customerRepository.save(new Customer("Maciek","Gruszczyński","maciek.gruszka@gmail.com"));
 			customerRepository.save(new Customer("Adam","Nowak","adam.nowak@gmail.com"));
-			videoRepository.save(new Video("Pirates of The Carraibean","Dontknow","2017"));
-			videoRepository.save(new Video("Fast and furious","Spielberg","2012"));
+			videoRepository.save(new Video("Pirates of The Caribbean 5","Dontknow","2017"));
+			videoRepository.save(new Video("Fast and furious 12","Spielberg","2012"));
 			rentalRepository.save(new Rental(customerRepository.findOne(2l),videoRepository.findOne(1l), new Date(new java.util.Date().getTime()),false));
 		};
 	}

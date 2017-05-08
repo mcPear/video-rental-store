@@ -39,14 +39,11 @@ public class RentalUI extends VerticalLayout {
     final Button returnBtn;
     private boolean currentRentalsListed;
     private static final Logger log = LoggerFactory.getLogger(VideoRentalStoreApplication.class);
-    private final RentalRepository repo;
-    private final RentalEditor editor;
-    private final VideoRepository videoRepository;
+    private final RentalRepository rentalrepository;
 
     @Autowired
-    public RentalUI(RentalRepository repo, RentalEditor editor, VideoRepository videoRepository) {
-        this.editor=editor;
-        this.repo=repo;
+    public RentalUI(RentalRepository rentalrepository, RentalEditor editor, VideoRepository videoRepository) {
+        this.rentalrepository = rentalrepository;
         this.grid=new Grid<>(Rental.class);
         this.filter=new TextField();
         this.addNewBtn = new Button("New rental", VaadinIcons.PLUS);
@@ -54,7 +51,6 @@ public class RentalUI extends VerticalLayout {
         this.currentBtn = new Button("Current", VaadinIcons.CLOCK);
         this.returnBtn = new Button("Return video", VaadinIcons.FILM);
         this.chooseTimeBtns = new CssLayout(currentBtn, archiveBtn);
-        this.videoRepository = videoRepository;
 
         HorizontalLayout actions = new HorizontalLayout(filter, addNewBtn, chooseTimeBtns, returnBtn);
         addComponents(actions,grid,editor);
@@ -93,7 +89,7 @@ public class RentalUI extends VerticalLayout {
             if (rentalOptional.isPresent()&&!rentalOptional.get().getReturned()){
                 Rental rental = rentalOptional.get();
                 rental.setReturned(true);
-                repo.save(rental);
+                rentalrepository.save(rental);
                 listArchiveRentals(filter.getValue());
                 listCurrentRentals(filter.getValue());
 
@@ -116,20 +112,20 @@ public class RentalUI extends VerticalLayout {
 
     private void listCurrentRentals(String filterText) {
         if (StringUtils.isEmpty(filterText)) {
-            grid.setItems(repo.findByReturnedFalse());
+            grid.setItems(rentalrepository.findByReturnedFalse());
         }
         else {
-            grid.setItems(repo.findByReturnedFalseAndCustomerLastNameStartsWithIgnoreCase(filterText));
+            grid.setItems(rentalrepository.findByReturnedFalseAndCustomerLastNameStartsWithIgnoreCase(filterText));
         }
         currentRentalsListed=true;
     }
 
     private void listArchiveRentals(String filterText) {
         if (StringUtils.isEmpty(filterText)) {
-            grid.setItems(repo.findByReturnedTrue());
+            grid.setItems(rentalrepository.findByReturnedTrue());
         }
         else {
-            grid.setItems(repo.findByReturnedTrueAndCustomerLastNameStartsWithIgnoreCase(filterText));
+            grid.setItems(rentalrepository.findByReturnedTrueAndCustomerLastNameStartsWithIgnoreCase(filterText));
         }
         currentRentalsListed=false;
     }

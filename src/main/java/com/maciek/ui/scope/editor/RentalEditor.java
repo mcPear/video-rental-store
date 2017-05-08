@@ -4,9 +4,6 @@ package com.maciek.ui.scope.editor;
  * Created by maciej on 06.05.17.
  */
 import com.maciek.VideoRentalStoreApplication;
-import com.maciek.entity.Customer;
-import com.maciek.entity.Rental;
-import com.maciek.entity.Video;
 import com.maciek.model.RentalModel;
 import com.maciek.repository.CustomerRepository;
 import com.maciek.repository.RentalRepository;
@@ -25,7 +22,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.sql.Date;
 import java.util.List;
 
 @SpringComponent
@@ -33,8 +29,6 @@ import java.util.List;
 public class RentalEditor extends VerticalLayout {
 
     private final RentalRepository rentalRepository;
-    private final CustomerRepository customerRepository;
-    private final VideoRepository videoRepository;
     private static final Logger log = LoggerFactory.getLogger(VideoRentalStoreApplication.class);
     private RentalModel currEditedRentalModel;
     private final TextField customerId = new TextField("Customer id");
@@ -47,8 +41,6 @@ public class RentalEditor extends VerticalLayout {
 
     @Autowired
     public RentalEditor(RentalRepository rentalRepository, CustomerRepository customerRepository, VideoRepository videoRepository, DBService dbService) {
-        this.customerRepository = customerRepository;
-        this.videoRepository = videoRepository;
         this.rentalRepository = rentalRepository;
         this.dbService = dbService;
 
@@ -78,7 +70,7 @@ public class RentalEditor extends VerticalLayout {
         save.addClickListener(e ->
         {
             if(fieldsAreValid()) {
-                rentalRepository.save(rentalModelToRental());
+                rentalRepository.save(dbService.constructRental(currEditedRentalModel));
                 h.onChange();
                 Notification.show("Saved successfully", Notification.Type.TRAY_NOTIFICATION);
             }
@@ -87,19 +79,11 @@ public class RentalEditor extends VerticalLayout {
         });
     }
 
-    public Rental rentalModelToRental(){
-        Customer customer = customerRepository.findOne(Long.parseLong(currEditedRentalModel.getCustomerId()));
-        Video video = videoRepository.findOne(Long.parseLong(currEditedRentalModel.getVideoId()));
-        Date date = currEditedRentalModel.getDate();
-        Boolean returned = currEditedRentalModel.getReturned();
-        return new Rental(customer, video, date, returned);
-    }
-
     private void bindWithValidatorCustomerId(){
         String atLeastOneDigitRegex = "[\\d]+";
         binder.forField(customerId).
                 withValidator(id -> id.matches(atLeastOneDigitRegex), "Invalid customer id").
-                withValidator(id -> customerExistsInDB(Long.parseLong(id)), "There is no customer with this ID").
+                withValidator(id -> dbService.customerExists(Long.parseLong(id)), "There is no customer with this ID").
                 bind(RentalModel::getCustomerId, RentalModel::setCustomerId);
     }
 
@@ -107,7 +91,7 @@ public class RentalEditor extends VerticalLayout {
         String atLeastOneDigitRegex = "[\\d]+";
         binder.forField(videoId).
                 withValidator(id -> id.matches(atLeastOneDigitRegex), "Invalid video id").
-                withValidator(id -> videoExistsInDB(Long.parseLong(id)), "There is no video with this ID").
+                withValidator(id -> dbService.videoExists(Long.parseLong(id)), "There is no video with this ID").
                 withValidator(id -> dbService.videoIsAvailable(Long.parseLong(id)), "Video is unavailable").
                 bind(RentalModel::getVideoId, RentalModel::setVideoId);
     }
@@ -115,14 +99,6 @@ public class RentalEditor extends VerticalLayout {
     private Boolean fieldsAreValid(){
         BinderValidationStatus<RentalModel> validationStatus = binder.validate();
         return !validationStatus.hasErrors();
-    }
-
-    private Boolean customerExistsInDB(Long id){
-        return customerRepository.findOne(id)!=null;
-    }
-
-    private Boolean videoExistsInDB(Long id){
-        return  videoRepository.findOne(id)!=null;
     }
 
     private void showErrorMessage(){

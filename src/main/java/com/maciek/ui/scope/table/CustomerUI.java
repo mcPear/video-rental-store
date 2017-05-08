@@ -19,16 +19,14 @@ import org.springframework.util.StringUtils;
 @UIScope
 public class CustomerUI extends VerticalLayout {
 
-    private final CustomerRepository repo;
-    private final CustomerEditor editor;
+    private final CustomerRepository customerRepository;
     private final Grid<Customer> grid;
     private final TextField filter;
     private final Button addNewBtn;
 
     @Autowired
-    public CustomerUI(CustomerRepository repo, CustomerEditor editor) {
-        this.editor=editor;
-        this.repo=repo;
+    public CustomerUI(CustomerRepository customerRepository, CustomerEditor editor) {
+        this.customerRepository = customerRepository;
         this.grid=new Grid<>(Customer.class);
         this.filter=new TextField();
         this.addNewBtn = new Button("New customer", VaadinIcons.PLUS);
@@ -56,10 +54,10 @@ public class CustomerUI extends VerticalLayout {
 
     private void listCustomers(String filterText) {
         if (StringUtils.isEmpty(filterText)) {
-            grid.setItems(repo.findAll());
+            grid.setItems(customerRepository.findAll());
         }
         else {
-            grid.setItems(repo.findByLastNameStartsWithIgnoreCase(filterText));
+            grid.setItems(customerRepository.findByLastNameStartsWithIgnoreCase(filterText));
         }
     }
 

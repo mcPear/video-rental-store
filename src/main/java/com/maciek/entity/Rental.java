@@ -40,5 +40,4 @@ public class Rental {
         this.returned = returned;
     }
 
-
 }

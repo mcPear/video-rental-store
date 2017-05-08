@@ -5,6 +5,7 @@ import com.maciek.entity.Rental;
 import com.maciek.entity.Video;
 import com.maciek.repository.RentalRepository;
 import com.maciek.repository.VideoRepository;
+import com.maciek.service.DBService;
 import com.maciek.ui.scope.editor.VideoEditor;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.shared.ui.ValueChangeMode;
@@ -27,26 +28,20 @@ import java.util.stream.Collectors;
 @UIScope
 public class VideoUI extends VerticalLayout {
 
-    private final VideoRepository repo;
     private final VideoEditor editor;
     private final Grid<Video> grid;
     private final TextField filter;
     private final Button addNewBtn;
     private static final Logger log = LoggerFactory.getLogger(VideoRentalStoreApplication.class);
-    private final RentalUI rentalUI;
-    private final RentalRepository rentalRepository;
-    private final VideoRepository videoRepository;
+    private final DBService dbService;
 
     @Autowired
-    public VideoUI(VideoRepository repo, VideoEditor videoEditor, RentalUI rentalUI, RentalRepository rentalRepository, VideoRepository videoRepository) {
+    public VideoUI(VideoEditor videoEditor, RentalUI rentalUI, DBService dbService) {
         this.editor=videoEditor;
-        this.repo=repo;
         this.grid=new Grid<>(Video.class);
         this.filter=new TextField();
         this.addNewBtn = new Button("New video", VaadinIcons.PLUS);
-        this.rentalUI = rentalUI;
-        this.rentalRepository = rentalRepository;
-        this.videoRepository=videoRepository;
+        this.dbService=dbService;
 
         HorizontalLayout actions = new HorizontalLayout(filter, addNewBtn);
         addComponents(actions,grid,editor);
@@ -72,21 +67,11 @@ public class VideoUI extends VerticalLayout {
     }
 
     private void listAvailableVideos(String filterText) {
-        List<Rental> notReturnedRentals = rentalRepository.findByReturnedFalse();
-        List<Video> unavailableVideos = notReturnedRentals.stream().map(Rental::getVideo).collect(Collectors.toList());
         if (StringUtils.isEmpty(filterText)) {
-            List<Video> availableVideos = videoRepository.findAll();
-            for(Video uv:unavailableVideos){
-                availableVideos = availableVideos.stream().filter(v -> v.getId()!=uv.getId()).collect(Collectors.toList());
-            }
-            grid.setItems(availableVideos);
+            grid.setItems(dbService.findAvailableVideos());
         }
         else {
-            List<Video> availableFilteredVideos = videoRepository.findByTitleStartsWithIgnoreCase(filterText);
-            for(Video uv:unavailableVideos){
-                availableFilteredVideos = availableFilteredVideos.stream().filter(v -> v.getId()!=uv.getId()).collect(Collectors.toList());
-            }
-            grid.setItems(availableFilteredVideos);
+            grid.setItems(dbService.findAvailableVideosStartsWithIgnoreCase(filterText));
         }
     }
 
