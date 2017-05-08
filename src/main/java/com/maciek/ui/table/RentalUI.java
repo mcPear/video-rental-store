@@ -38,7 +38,6 @@ public class RentalUI extends VerticalLayout {
     private final CssLayout chooseTimeBtns;
     final Button returnBtn;
     private boolean currentRentalsListed;
-    private static final Logger log = LoggerFactory.getLogger(VideoRentalStoreApplication.class);
     private final RentalRepository rentalrepository;
 
     @Autowired
@@ -53,7 +52,8 @@ public class RentalUI extends VerticalLayout {
         this.chooseTimeBtns = new CssLayout(currentBtn, archiveBtn);
 
         HorizontalLayout actions = new HorizontalLayout(filter, addNewBtn, chooseTimeBtns, returnBtn);
-        addComponents(actions,grid,editor);
+        HorizontalLayout gridAndEditorLayout = new HorizontalLayout(grid, editor);
+        addComponents(actions,gridAndEditorLayout);
         chooseTimeBtns.setStyleName(ValoTheme.LAYOUT_COMPONENT_GROUP);
 
         grid.setHeight(300, Unit.PIXELS);
@@ -95,10 +95,10 @@ public class RentalUI extends VerticalLayout {
 
                 Video video = rental.getVideo();
                 videoRepository.save(video);
-                Notification.show("Returned successfully");
+                Notification.show("Returned successfully", Notification.Type.TRAY_NOTIFICATION);
             }
             else{
-                Notification.show("Select a rental first");
+                Notification.show("Select a rental first", Notification.Type.WARNING_MESSAGE);
             }
         });
 

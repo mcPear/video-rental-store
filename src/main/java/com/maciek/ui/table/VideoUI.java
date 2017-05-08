@@ -26,7 +26,6 @@ public class VideoUI extends VerticalLayout {
     private final Grid<Video> grid;
     private final TextField filter;
     private final Button addNewBtn;
-    private static final Logger log = LoggerFactory.getLogger(VideoRentalStoreApplication.class);
     private final DBService dbService;
 
     @Autowired

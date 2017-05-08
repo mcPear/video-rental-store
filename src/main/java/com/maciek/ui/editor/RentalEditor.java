@@ -29,7 +29,6 @@ import java.util.List;
 public class RentalEditor extends VerticalLayout {
 
     private final RentalRepository rentalRepository;
-    private static final Logger log = LoggerFactory.getLogger(VideoRentalStoreApplication.class);
     private RentalModel currEditedRentalModel;
     private final TextField customerId = new TextField("Customer id");
     private final TextField videoId = new TextField("Video id");
@@ -40,7 +39,7 @@ public class RentalEditor extends VerticalLayout {
     private final DBService dbService;
 
     @Autowired
-    public RentalEditor(RentalRepository rentalRepository, CustomerRepository customerRepository, VideoRepository videoRepository, DBService dbService) {
+    public RentalEditor(RentalRepository rentalRepository, DBService dbService) {
         this.rentalRepository = rentalRepository;
         this.dbService = dbService;
 

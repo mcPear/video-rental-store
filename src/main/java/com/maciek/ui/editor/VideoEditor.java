@@ -17,7 +17,6 @@ import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.sql.Date;
 import java.time.Year;
 import java.util.List;
 
@@ -37,7 +36,7 @@ public class VideoEditor extends VerticalLayout {
     private final Binder<Video> binder = new Binder<>(Video.class);
 
     @Autowired
-    public VideoEditor(VideoRepository repository, RentalEditor rentalEditor, RentalUI rentalUI) {
+    public VideoEditor(VideoRepository repository, RentalEditor rentalEditor) {
         this.repository = repository;
         this.rentalEditor=rentalEditor;
 

@@ -23,8 +23,6 @@ public class VideoRentalStoreApplication {
 		SpringApplication.run(VideoRentalStoreApplication.class, args);
 	}
 
-	private static final Logger log = LoggerFactory.getLogger(VideoRentalStoreApplication.class);
-
 	@Autowired
 	CustomerRepository customerRepository;
 

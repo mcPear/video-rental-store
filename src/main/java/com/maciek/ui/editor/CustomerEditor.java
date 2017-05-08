@@ -37,7 +37,6 @@ public class CustomerEditor extends VerticalLayout {
     private final Button cancel = new Button("Cancel");
     private final CssLayout actions = new CssLayout(save, cancel);
     private final Binder<Customer> binder = new Binder<>(Customer.class);
-    private static final Logger log = LoggerFactory.getLogger(VideoRentalStoreApplication.class);
 
     @Autowired
     public CustomerEditor(CustomerRepository repository) {
