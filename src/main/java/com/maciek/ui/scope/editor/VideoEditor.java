@@ -3,7 +3,6 @@ package com.maciek.ui.scope.editor;
 /**
  * Created by maciej on 06.05.17.
  */
-import com.maciek.entity.Customer;
 import com.maciek.entity.Video;
 import com.maciek.repository.VideoRepository;
 import com.maciek.ui.scope.table.RentalUI;
@@ -63,7 +62,6 @@ public class VideoEditor extends VerticalLayout {
 
     public final void openVideoEditor(Video v) {
         currEditedVideo = v;
-        currEditedVideo.setRented(false);
         binder.setBean(currEditedVideo);
         setVisible(true);
         save.focus();
@@ -110,9 +108,9 @@ public class VideoEditor extends VerticalLayout {
         List<ValidationResult> validationResultList = validationStatus.getValidationErrors();
 
         if(validationResultList.size()==0)
-            Notification.show("Saved successfully");
+            Notification.show("Saved successfully", Notification.Type.TRAY_NOTIFICATION);
         else
-            Notification.show(validationResultList.get(0).getErrorMessage());
+            Notification.show(validationResultList.get(0).getErrorMessage(), Notification.Type.WARNING_MESSAGE);
     }
 
 }

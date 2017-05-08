@@ -11,6 +11,7 @@ import com.maciek.model.RentalModel;
 import com.maciek.repository.CustomerRepository;
 import com.maciek.repository.RentalRepository;
 import com.maciek.repository.VideoRepository;
+import com.maciek.service.DBService;
 import com.vaadin.data.Binder;
 import com.vaadin.data.BinderValidationStatus;
 import com.vaadin.data.ValidationResult;
@@ -42,12 +43,14 @@ public class RentalEditor extends VerticalLayout {
     private final Button cancel = new Button("Cancel");
     private final CssLayout actions = new CssLayout(save, cancel);
     private final Binder<RentalModel> binder = new Binder<>(RentalModel.class);
+    private final DBService dbService;
 
     @Autowired
-    public RentalEditor(RentalRepository rentalRepository, CustomerRepository customerRepository, VideoRepository videoRepository) {
+    public RentalEditor(RentalRepository rentalRepository, CustomerRepository customerRepository, VideoRepository videoRepository, DBService dbService) {
         this.customerRepository = customerRepository;
         this.videoRepository = videoRepository;
         this.rentalRepository = rentalRepository;
+        this.dbService = dbService;
 
         addComponents(customerId, videoId, actions);
 
@@ -76,13 +79,11 @@ public class RentalEditor extends VerticalLayout {
         {
             if(fieldsAreValid()) {
                 rentalRepository.save(rentalModelToRental());
-                Video modifiedVideo = videoRepository.findOne(Long.parseLong(currEditedRentalModel.getVideoId()));
-                modifiedVideo.setRented(true);
-                videoRepository.save(modifiedVideo);
                 h.onChange();
-                showErrorMessage();
+                Notification.show("Saved successfully", Notification.Type.TRAY_NOTIFICATION);
             }
-            Notification.show("Saved successfully");
+            else
+                showErrorMessage();
         });
     }
 
@@ -107,7 +108,7 @@ public class RentalEditor extends VerticalLayout {
         binder.forField(videoId).
                 withValidator(id -> id.matches(atLeastOneDigitRegex), "Invalid video id").
                 withValidator(id -> videoExistsInDB(Long.parseLong(id)), "There is no video with this ID").
-                withValidator(id -> videoIsAvailable(Long.parseLong(id)), "Video is unavailable").
+                withValidator(id -> dbService.videoIsAvailable(Long.parseLong(id)), "Video is unavailable").
                 bind(RentalModel::getVideoId, RentalModel::setVideoId);
     }
 
@@ -120,11 +121,6 @@ public class RentalEditor extends VerticalLayout {
         return customerRepository.findOne(id)!=null;
     }
 
-    private Boolean videoIsAvailable(Long id){
-        Video video = videoRepository.findOne(id);
-        return (video != null) && (!video.getRented());
-    }
-
     private Boolean videoExistsInDB(Long id){
         return  videoRepository.findOne(id)!=null;
     }
@@ -133,8 +129,7 @@ public class RentalEditor extends VerticalLayout {
         BinderValidationStatus<RentalModel> validationStatus = binder.validate();
         List<ValidationResult> validationResultList = validationStatus.getValidationErrors();
 
-        if(validationResultList.size()==0)
-            Notification.show("Saved successfully");
+            Notification.show(validationResultList.get(0).getErrorMessage(), Notification.Type.WARNING_MESSAGE);
     }
 
 }

@@ -76,12 +76,12 @@ public class RentalUI extends VerticalLayout {
         addNewBtn.addClickListener(e -> editor.openRentalModelEditor(new RentalModel("0", "0" , new Date(new java.util.Date().getTime()),false)));
 
         archiveBtn.addClickListener(e -> {
-            listArchiveRentals("");
+            listArchiveRentals(null);
             changeArchiveBtnToPrimary();
         });
 
         currentBtn.addClickListener(e -> {
-            listCurrentRentals("");
+            listCurrentRentals(null);
             changeCurrentBtnToPrimary();
         });
         currentBtn.addStyleName(ValoTheme.BUTTON_PRIMARY);
@@ -98,7 +98,6 @@ public class RentalUI extends VerticalLayout {
                 listCurrentRentals(filter.getValue());
 
                 Video video = rental.getVideo();
-                video.setRented(false);
                 videoRepository.save(video);
                 Notification.show("Returned successfully");
             }

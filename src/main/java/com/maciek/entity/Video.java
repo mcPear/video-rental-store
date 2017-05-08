@@ -27,18 +27,13 @@ public class Video {
 
     private String year;
 
-    //I'm not sure it's a good idea to put a new attribute to filter rows, but it seems to be more effective than fetching Rentals
-    // every time I want to display available Videos
-    private Boolean rented;
-
     @OneToMany(mappedBy = "video", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Rental> rentals;
 
-    public Video(String title, String director, String year, Boolean rented) {
+    public Video(String title, String director, String year) {
         this.title = title;
         this.director = director;
         this.year = year;
-        this.rented = rented;
     }
 
     public String toString(){

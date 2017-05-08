@@ -119,8 +119,8 @@ public class CustomerEditor extends VerticalLayout {
         List<ValidationResult> validationResultList = validationStatus.getValidationErrors();
 
         if(validationResultList.size()==0)
-            Notification.show("Saved successfully");
+            Notification.show("Saved successfully", Notification.Type.TRAY_NOTIFICATION);
         else
-            Notification.show(validationResultList.get(0).getErrorMessage());
+            Notification.show(validationResultList.get(0).getErrorMessage(), Notification.Type.WARNING_MESSAGE);
     }
 }
