@@ -1,4 +1,4 @@
-package com.maciek.ui.scope.table;
+package com.maciek.ui.table;
 
 import com.maciek.VideoRentalStoreApplication;
 import com.maciek.entity.Rental;
@@ -6,7 +6,7 @@ import com.maciek.entity.Video;
 import com.maciek.model.RentalModel;
 import com.maciek.repository.RentalRepository;
 import com.maciek.repository.VideoRepository;
-import com.maciek.ui.scope.editor.RentalEditor;
+import com.maciek.ui.editor.RentalEditor;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.shared.ui.ValueChangeMode;
 import com.vaadin.spring.annotation.SpringComponent;

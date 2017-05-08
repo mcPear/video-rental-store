@@ -1,8 +1,8 @@
 package com.maciek.ui;
 
-import com.maciek.ui.scope.table.CustomerUI;
-import com.maciek.ui.scope.table.RentalUI;
-import com.maciek.ui.scope.table.VideoUI;
+import com.maciek.ui.table.CustomerUI;
+import com.maciek.ui.table.RentalUI;
+import com.maciek.ui.table.VideoUI;
 import com.vaadin.annotations.Theme;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.spring.annotation.SpringUI;

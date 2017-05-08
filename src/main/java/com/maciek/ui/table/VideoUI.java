@@ -1,12 +1,9 @@
-package com.maciek.ui.scope.table;
+package com.maciek.ui.table;
 
 import com.maciek.VideoRentalStoreApplication;
-import com.maciek.entity.Rental;
 import com.maciek.entity.Video;
-import com.maciek.repository.RentalRepository;
-import com.maciek.repository.VideoRepository;
 import com.maciek.service.DBService;
-import com.maciek.ui.scope.editor.VideoEditor;
+import com.maciek.ui.editor.VideoEditor;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.shared.ui.ValueChangeMode;
 import com.vaadin.spring.annotation.SpringComponent;
@@ -16,9 +13,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Created by maciej on 06.05.17.

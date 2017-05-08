@@ -1,4 +1,4 @@
-package com.maciek.ui.scope.editor;
+package com.maciek.ui.editor;
 
 /**
  * Created by maciej on 06.05.17.

@@ -1,11 +1,11 @@
-package com.maciek.ui.scope.editor;
+package com.maciek.ui.editor;
 
 /**
  * Created by maciej on 06.05.17.
  */
 import com.maciek.entity.Video;
 import com.maciek.repository.VideoRepository;
-import com.maciek.ui.scope.table.RentalUI;
+import com.maciek.ui.table.RentalUI;
 import com.vaadin.data.Binder;
 import com.vaadin.data.BinderValidationStatus;
 import com.vaadin.data.ValidationResult;
@@ -17,6 +17,8 @@ import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.sql.Date;
+import java.time.Year;
 import java.util.List;
 
 @SpringComponent
@@ -95,6 +97,7 @@ public class VideoEditor extends VerticalLayout {
         String yearRegex = "\\d{4}";
         binder.forField(year).
                 withValidator(year -> year.matches(yearRegex), "Invalid year").
+                withValidator(year -> Integer.parseInt(year)<= Year.now().getValue(), "Invalid year").
                 bind(Video::getYear, Video::setYear);
     }
 

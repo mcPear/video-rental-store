@@ -1,8 +1,8 @@
-package com.maciek.ui.scope.table;
+package com.maciek.ui.table;
 
 import com.maciek.entity.Customer;
 import com.maciek.repository.CustomerRepository;
-import com.maciek.ui.scope.editor.CustomerEditor;
+import com.maciek.ui.editor.CustomerEditor;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.shared.ui.ValueChangeMode;
 import com.vaadin.spring.annotation.SpringComponent;
