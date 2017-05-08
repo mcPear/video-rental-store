@@ -13,6 +13,7 @@ import java.util.Set;
 
 @Getter
 @Setter
+@AllArgsConstructor
 @NoArgsConstructor
 @Entity
 public class Video {
@@ -29,12 +30,6 @@ public class Video {
 
     @OneToMany(mappedBy = "video", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Rental> rentals;
-
-    public Video(String title, String director, String year) {
-        this.title = title;
-        this.director = director;
-        this.year = year;
-    }
 
     public String toString(){
         return "("+id+") "+title+" "+director+" "+year;

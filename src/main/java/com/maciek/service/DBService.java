@@ -76,7 +76,7 @@ public class DBService {
         Video video = videoRepository.findOne(Long.parseLong(rentalModel.getVideoId()));
         Date date = rentalModel.getDate();
         Boolean returned = rentalModel.getReturned();
-        return new Rental(customer, video, date, returned);
+        return new Rental(null, customer, video, date, returned);
     }
 
 }

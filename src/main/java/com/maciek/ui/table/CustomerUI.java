@@ -42,7 +42,7 @@ public class CustomerUI extends VerticalLayout {
         filter.setValueChangeMode(ValueChangeMode.LAZY);
         filter.addValueChangeListener(e -> listCustomers(e.getValue()));
 
-        addNewBtn.addClickListener(e -> editor.openCustomerEditor(new Customer("First name", "Second name", "email@address.ex")));
+        addNewBtn.addClickListener(e -> editor.openCustomerEditor(new Customer(null, "First name", "Second name", "email@address.ex", null)));
 
         editor.setChangeHandler(() -> {
             editor.setVisible(false);

@@ -48,7 +48,7 @@ public class VideoUI extends VerticalLayout {
         filter.setValueChangeMode(ValueChangeMode.LAZY);
         filter.addValueChangeListener(e -> listAvailableVideos(e.getValue()));
 
-        addNewBtn.addClickListener(e -> editor.openVideoEditor(new Video("Title", "Director", "Year")));
+        addNewBtn.addClickListener(e -> editor.openVideoEditor(new Video(null, "Title", "Director", "Year", null)));
 
         rentalUI.returnBtn.addClickListener(e-> listAvailableVideos(filter.getValue()));
 

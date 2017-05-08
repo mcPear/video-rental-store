@@ -11,6 +11,7 @@ import java.util.Set;
 
 @Setter
 @Getter
+@AllArgsConstructor
 @NoArgsConstructor
 @Entity
 public class Customer {
@@ -27,12 +28,6 @@ public class Customer {
 
     @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Rental> rentals;
-
-    public Customer(String firstName, String lastName, String emailAddress){
-        this.firstName=firstName;
-        this.lastName=lastName;
-        this.emailAddress=emailAddress;
-    }
 
     public String toString(){
         return "("+id+") "+lastName+" "+firstName;

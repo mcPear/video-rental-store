@@ -11,6 +11,7 @@ import java.sql.Date;
 
 @Setter
 @Getter
+@AllArgsConstructor
 @NoArgsConstructor
 @ToString
 @Entity
@@ -32,12 +33,5 @@ public class Rental {
     private Date date;
 
     private Boolean returned;
-
-    public Rental(Customer customer, Video video, Date date, Boolean returned) {
-        this.customer = customer;
-        this.video = video;
-        this.date = date;
-        this.returned = returned;
-    }
 
 }
