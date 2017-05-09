@@ -10,3 +10,4 @@ App facilitates:
 - nothing more, nothing less
 
 I've used: Maven, Spring Core, H2, Vaadin, JUnit
+Running at localhost:8080
