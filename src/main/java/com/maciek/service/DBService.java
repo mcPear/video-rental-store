@@ -9,7 +9,6 @@ import com.maciek.repository.RentalRepository;
 import com.maciek.repository.VideoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 import java.sql.Date;
 import java.util.List;
@@ -34,13 +33,14 @@ public class DBService {
 
     public Boolean videoIsAvailable(Long id){
         List<Rental> notReturnedRentals = rentalRepository.findByReturnedFalse();
-        boolean result = true;
+        boolean isNotRented = true;
         for (Rental r:notReturnedRentals){
             if(r.getVideo().getId()==id)
-                result=false;
+                isNotRented=false;
         }
+        boolean exists = videoRepository.findOne(id)!=null;
 
-        return result;
+        return isNotRented && exists;
     }
 
     public List<Video> findAvailableVideos() {
