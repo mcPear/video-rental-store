@@ -17,22 +17,24 @@ import org.springframework.util.StringUtils;
 
 @SpringComponent
 @UIScope
-public class CustomerUI extends VerticalLayout {
+public class CustomerUI extends HorizontalLayout {
 
     private final CustomerRepository customerRepository;
-    private final Grid<Customer> grid;
-    private final TextField filter;
-    private final Button addNewBtn;
+    private final Grid<Customer> grid=new Grid<>(Customer.class);
+    private final TextField filter=new TextField();
+    private final Button addNewBtn = new Button("New customer", VaadinIcons.PLUS);
+    private final RentalUI rentalUI;
 
     @Autowired
-    public CustomerUI(CustomerRepository customerRepository, CustomerEditor editor) {
+    public CustomerUI(CustomerRepository customerRepository, CustomerEditor editor, RentalUI rentalUI) {
         this.customerRepository = customerRepository;
-        this.grid=new Grid<>(Customer.class);
-        this.filter=new TextField();
-        this.addNewBtn = new Button("New customer", VaadinIcons.PLUS);
+        this.rentalUI=rentalUI;
+
+        rentalUI.customerUI=this;
 
         HorizontalLayout actions = new HorizontalLayout(filter, addNewBtn);
-        addComponents(actions,grid,editor);
+        VerticalLayout actionsAndGridLayout = new VerticalLayout(actions, grid);
+        addComponents(editor, actionsAndGridLayout);
 
         grid.setHeight(300, Unit.PIXELS);
         grid.setWidth(700, Unit.PIXELS);
@@ -59,6 +61,10 @@ public class CustomerUI extends VerticalLayout {
         else {
             grid.setItems(customerRepository.findByLastNameStartsWithIgnoreCase(filterText));
         }
+    }
+
+    public Grid<Customer> getGrid(){
+        return grid;
     }
 
 }

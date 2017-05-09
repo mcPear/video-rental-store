@@ -33,7 +33,7 @@ public class VideoRentalStoreApplication {
 	RentalRepository rentalRepository;
 
 	@Bean
-	public CommandLineRunner loadData() {
+	public CommandLineRunner loadSamples() {
 		return (args) -> {
 			customerRepository.save(new Customer(null,"Maciek","Gruszczyński","maciek.gruszka@gmail.com", null));
 			customerRepository.save(new Customer(null, "Adam","Nowak","adam.nowak@gmail.com", null));

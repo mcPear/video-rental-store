@@ -22,7 +22,7 @@ import java.util.List;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations={
-        "classpath*:maciek-context.xml"
+        "classpath*:spring-context.xml"
 })
 @DataJpaTest
 public class DBServiceTests {
@@ -129,6 +129,17 @@ public class DBServiceTests {
     public void shouldReturnTrueWhenCustomerExists(){
         Long savedId = customerRepository.save(new Customer(null, "firstname", "secondname", "email", null)).getId();
         Assert.assertTrue(sut.customerExists(savedId));
+    }
+
+    @Test
+    public void shouldSaveRental(){
+        Video video=new Video(null, "title", "director", "1995", null);
+        Customer customer = new Customer(null, "firstname", "secondname", "email", null);
+        videoRepository.save(video);
+        customerRepository.save(customer);
+        rentalRepository.deleteAll();
+        sut.saveNewRental(customer, video);
+        Assert.assertTrue(rentalRepository.findAll().size()==1);
     }
 
 }

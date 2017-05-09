@@ -24,8 +24,6 @@ import java.util.List;
 @UIScope
 public class VideoEditor extends VerticalLayout {
 
-    private final VideoRepository repository;
-    private final RentalEditor rentalEditor;
     private Video currEditedVideo;
     private final TextField title = new TextField("Title");
     private final TextField director = new TextField("Director");
@@ -36,9 +34,7 @@ public class VideoEditor extends VerticalLayout {
     private final Binder<Video> binder = new Binder<>(Video.class);
 
     @Autowired
-    public VideoEditor(VideoRepository repository, RentalEditor rentalEditor) {
-        this.repository = repository;
-        this.rentalEditor=rentalEditor;
+    public VideoEditor(VideoRepository repository) {
 
         addComponents(title, director, year, actions);
 
@@ -70,7 +66,6 @@ public class VideoEditor extends VerticalLayout {
     }
 
     public void setChangeHandler(ChangeHandler h) {
-        rentalEditor.save.addClickListener(e -> h.onChange());
         save.addClickListener(e -> {if(fieldsAreValid()) h.onChange();});
     }
 

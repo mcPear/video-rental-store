@@ -1,12 +1,11 @@
 package com.maciek.ui.table;
 
-import com.maciek.VideoRentalStoreApplication;
+import com.maciek.entity.Customer;
 import com.maciek.entity.Rental;
 import com.maciek.entity.Video;
-import com.maciek.model.RentalModel;
 import com.maciek.repository.RentalRepository;
 import com.maciek.repository.VideoRepository;
-import com.maciek.ui.editor.RentalEditor;
+import com.maciek.service.DBService;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.shared.ui.ValueChangeMode;
 import com.vaadin.spring.annotation.SpringComponent;
@@ -14,12 +13,9 @@ import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.*;
 import com.vaadin.ui.components.grid.SingleSelectionModel;
 import com.vaadin.ui.themes.ValoTheme;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 
-import java.sql.Date;
 import java.util.Optional;
 
 /**
@@ -30,30 +26,24 @@ import java.util.Optional;
 @UIScope
 public class RentalUI extends VerticalLayout {
 
-    private final Grid<Rental> grid;
-    private final TextField filter;
-    private final Button addNewBtn;
-    private final Button archiveBtn;
-    private final Button currentBtn;
-    private final CssLayout chooseTimeBtns;
-    final Button returnBtn;
+    private final Grid<Rental> grid=new Grid<>(Rental.class);
+    private final TextField filter=new TextField();
+    private final Button addNewBtn = new Button("New rental", VaadinIcons.PLUS);
+    private final Button archiveBtn = new Button("Archive", VaadinIcons.ARCHIVE);
+    private final Button currentBtn = new Button("Current", VaadinIcons.CLOCK);
+    private final CssLayout chooseTimeBtns = new CssLayout(currentBtn, archiveBtn);
+    final Button returnBtn = new Button("Return video", VaadinIcons.FILM);
     private boolean currentRentalsListed;
-    private final RentalRepository rentalrepository;
+    private final RentalRepository rentalRepository;
+    CustomerUI customerUI;
+    VideoUI videoUI;
 
     @Autowired
-    public RentalUI(RentalRepository rentalrepository, RentalEditor editor, VideoRepository videoRepository) {
-        this.rentalrepository = rentalrepository;
-        this.grid=new Grid<>(Rental.class);
-        this.filter=new TextField();
-        this.addNewBtn = new Button("New rental", VaadinIcons.PLUS);
-        this.archiveBtn = new Button("Archive", VaadinIcons.ARCHIVE);
-        this.currentBtn = new Button("Current", VaadinIcons.CLOCK);
-        this.returnBtn = new Button("Return video", VaadinIcons.FILM);
-        this.chooseTimeBtns = new CssLayout(currentBtn, archiveBtn);
+    public RentalUI(RentalRepository rentalRepository, VideoRepository videoRepository, DBService dbService) {
+        this.rentalRepository = rentalRepository;
 
         HorizontalLayout actions = new HorizontalLayout(filter, addNewBtn, chooseTimeBtns, returnBtn);
-        HorizontalLayout gridAndEditorLayout = new HorizontalLayout(grid, editor);
-        addComponents(actions,gridAndEditorLayout);
+        addComponents(actions,grid);
         chooseTimeBtns.setStyleName(ValoTheme.LAYOUT_COMPONENT_GROUP);
 
         grid.setHeight(300, Unit.PIXELS);
@@ -69,7 +59,21 @@ public class RentalUI extends VerticalLayout {
                 listArchiveRentals(e.getValue());
             });
 
-        addNewBtn.addClickListener(e -> editor.openRentalModelEditor(new RentalModel("0", "0" , new Date(new java.util.Date().getTime()),false)));
+        addNewBtn.addClickListener(e -> {
+            SingleSelectionModel selectedVideoModel = (SingleSelectionModel<Video>) videoUI.getGrid().getSelectionModel();
+            SingleSelectionModel selectedCustomerModel = (SingleSelectionModel<Customer>) customerUI.getGrid().getSelectionModel();
+            Optional<Video> videoOptional = selectedVideoModel.getFirstSelectedItem();
+            Optional<Customer> customerOptional = selectedCustomerModel.getFirstSelectedItem();
+            if(videoOptional.isPresent() && customerOptional.isPresent()){
+                dbService.saveNewRental(customerOptional.get(), videoOptional.get());
+                Notification.show("Saved successfully", Notification.Type.TRAY_NOTIFICATION);
+            }
+            else{
+                Notification.show("Select a customer and a video first", Notification.Type.WARNING_MESSAGE);
+            }
+            listCurrentRentals(null);
+            videoUI.refreshGrid();
+        });
 
         archiveBtn.addClickListener(e -> {
             listArchiveRentals(null);
@@ -89,7 +93,7 @@ public class RentalUI extends VerticalLayout {
             if (rentalOptional.isPresent()&&!rentalOptional.get().getReturned()){
                 Rental rental = rentalOptional.get();
                 rental.setReturned(true);
-                rentalrepository.save(rental);
+                rentalRepository.save(rental);
                 listArchiveRentals(filter.getValue());
                 listCurrentRentals(filter.getValue());
 
@@ -102,30 +106,25 @@ public class RentalUI extends VerticalLayout {
             }
         });
 
-        editor.setChangeHandler(() -> {
-            editor.setVisible(false);
-            listCurrentRentals(filter.getValue());
-        });
-
         listCurrentRentals(null);
     }
 
     private void listCurrentRentals(String filterText) {
         if (StringUtils.isEmpty(filterText)) {
-            grid.setItems(rentalrepository.findByReturnedFalse());
+            grid.setItems(rentalRepository.findByReturnedFalse());
         }
         else {
-            grid.setItems(rentalrepository.findByReturnedFalseAndCustomerLastNameStartsWithIgnoreCase(filterText));
+            grid.setItems(rentalRepository.findByReturnedFalseAndCustomerLastNameStartsWithIgnoreCase(filterText));
         }
         currentRentalsListed=true;
     }
 
     private void listArchiveRentals(String filterText) {
         if (StringUtils.isEmpty(filterText)) {
-            grid.setItems(rentalrepository.findByReturnedTrue());
+            grid.setItems(rentalRepository.findByReturnedTrue());
         }
         else {
-            grid.setItems(rentalrepository.findByReturnedTrueAndCustomerLastNameStartsWithIgnoreCase(filterText));
+            grid.setItems(rentalRepository.findByReturnedTrueAndCustomerLastNameStartsWithIgnoreCase(filterText));
         }
         currentRentalsListed=false;
     }

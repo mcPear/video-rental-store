@@ -4,7 +4,6 @@ package com.maciek.ui.editor;
  * Created by maciej on 06.05.17.
  */
 
-import com.maciek.VideoRentalStoreApplication;
 import com.maciek.entity.Customer;
 import com.maciek.repository.CustomerRepository;
 import com.vaadin.data.Binder;
@@ -16,8 +15,6 @@ import com.vaadin.spring.annotation.SpringComponent;
 import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.mail.internet.AddressException;
@@ -28,7 +25,6 @@ import java.util.List;
 @UIScope
 public class CustomerEditor extends VerticalLayout {
 
-    private final CustomerRepository repository;
     private Customer currEditedCustomer;
     private final TextField firstName = new TextField("First name");
     private final TextField lastName = new TextField("Last name");
@@ -40,7 +36,6 @@ public class CustomerEditor extends VerticalLayout {
 
     @Autowired
     public CustomerEditor(CustomerRepository repository) {
-        this.repository = repository;
 
         addComponents(firstName, lastName, emailAddress, actions);
 

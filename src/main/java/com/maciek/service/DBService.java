@@ -3,7 +3,6 @@ package com.maciek.service;
 import com.maciek.entity.Customer;
 import com.maciek.entity.Rental;
 import com.maciek.entity.Video;
-import com.maciek.model.RentalModel;
 import com.maciek.repository.CustomerRepository;
 import com.maciek.repository.RentalRepository;
 import com.maciek.repository.VideoRepository;
@@ -71,12 +70,8 @@ public class DBService {
         return  videoRepository.findOne(id)!=null;
     }
 
-    public Rental constructRental(RentalModel rentalModel){
-        Customer customer = customerRepository.findOne(Long.parseLong(rentalModel.getCustomerId()));
-        Video video = videoRepository.findOne(Long.parseLong(rentalModel.getVideoId()));
-        Date date = rentalModel.getDate();
-        Boolean returned = rentalModel.getReturned();
-        return new Rental(null, customer, video, date, returned);
+    public void saveNewRental(Customer customer, Video video){
+        rentalRepository.save(new Rental(null, customer, video, new Date(new java.util.Date().getTime()), false));
     }
 
 }
