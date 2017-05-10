@@ -9,5 +9,5 @@ App facilitates:
 - returning a video
 - nothing more, nothing less
 
-I've used: Maven, Spring Core, H2, Vaadin, JUnit. 
+I've used: Maven, Spring Boot, H2, Vaadin, JUnit. 
 App runs at localhost:8080
